@@ -1,0 +1,38 @@
+version: 2
+
+sources:
+  - name: olist
+    description: "Olist e-commerce data loaded into DuckDB by the ETL pipeline"
+    database: "{{ env_var('DUCKDB_PATH', '../analytics.duckdb') }}"
+    schema: main
+    tables:
+      - name: orders_full
+        description: "Full joined orders table with customer, payment, item, and weather data"
+        columns:
+          - name: order_id
+            description: "Unique order identifier"
+            tests:
+              - not_null
+              - unique
+          - name: customer_id
+            description: "Customer identifier"
+            tests:
+              - not_null
+          - name: total_payment
+            description: "Total payment value for the order"
+            tests:
+              - not_null
+          - name: customer_state
+            description: "Brazilian state abbreviation (e.g. SP, RJ)"
+            tests:
+              - not_null
+          - name: was_late
+            description: "1 if delivered after estimated date, 0 otherwise"
+            tests:
+              - accepted_values:
+                  values: [0, 1]
+          - name: rain_category
+            description: "Weather bucket: No Rain / Light Rain / Heavy Rain"
+            tests:
+              - accepted_values:
+                  values: ['No Rain', 'Light Rain', 'Heavy Rain']

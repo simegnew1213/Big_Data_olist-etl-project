@@ -1,0 +1,69 @@
+version: 2
+
+models:
+  - name: stg_orders
+    description: "Cleaned and typed orders staging view — excludes nulls and zero-value orders"
+    columns:
+      - name: order_id
+        description: "Unique order identifier"
+        tests:
+          - not_null
+          - unique
+      - name: total_payment
+        description: "Total payment amount (must be > 0)"
+        tests:
+          - not_null
+      - name: was_late
+        tests:
+          - accepted_values:
+              values: [0, 1]
+      - name: rain_category
+        tests:
+          - accepted_values:
+              values: ['No Rain', 'Light Rain', 'Heavy Rain']
+
+  - name: stg_weather
+    description: "Distinct daily weather observations derived from orders_full"
+    columns:
+      - name: weather_date
+        tests:
+          - not_null
+          - unique
+      - name: temp_category
+        tests:
+          - accepted_values:
+              values: ['Hot', 'Warm', 'Cool']
+
+  - name: monthly_revenue
+    description: "Monthly aggregated revenue, order volume, and delivery KPIs"
+    columns:
+      - name: period
+        description: "YYYY-MM label, e.g. 2017-11"
+        tests:
+          - not_null
+          - unique
+      - name: total_orders
+        tests:
+          - not_null
+      - name: total_revenue
+        tests:
+          - not_null
+
+  - name: revenue_by_state
+    description: "Revenue and delivery performance per Brazilian state"
+    columns:
+      - name: customer_state
+        tests:
+          - not_null
+          - unique
+      - name: total_revenue
+        tests:
+          - not_null
+
+  - name: weather_impact
+    description: "Order volume and value grouped by rain category"
+    columns:
+      - name: rain_category
+        tests:
+          - not_null
+          - unique

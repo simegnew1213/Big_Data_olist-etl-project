@@ -1,0 +1,60 @@
+# ── Generated database (large binary) ───────────────────────
+analytics.duckdb
+
+# ── Raw data files (too large for git) ──────────────────────
+data/raw/*.csv
+data/raw/*.json
+
+# ── Intermediate & transformed data ─────────────────────────
+data/parquet/
+data/transformed/
+data/taxi_zones/
+
+# ── Python cache ─────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+
+# ── Virtual environments ──────────────────────────────────────
+venv/
+env/
+.env
+.venv/
+
+# ── Jupyter checkpoints ───────────────────────────────────────
+.ipynb_checkpoints/
+*_output.ipynb
+
+# ── Airflow generated files ───────────────────────────────────
+airflow/logs/
+airflow/dags/__pycache__/
+airflow.db
+airflow.cfg
+
+# ── Spark temp files ──────────────────────────────────────────
+spark-warehouse/
+metastore_db/
+derby.log
+
+# ── dbt artifacts ─────────────────────────────────────────────
+dbt/target/
+dbt/dbt_packages/
+dbt/logs/
+
+# ── IDE / OS ──────────────────────────────────────────────────
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+
+# ── Pipeline report (generated) ───────────────────────────────
+pipeline_report.json
+
+# ── Build artifacts ───────────────────────────────────────────
+*.egg-info/
+dist/
+build/
+.eggs/

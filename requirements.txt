@@ -1,0 +1,54 @@
+# Olist ETL Pipeline — Python Dependencies
+# =========================================
+# Install all:  pip install -r requirements.txt
+# Java 8+  is required separately for PySpark (see README)
+
+# ── Core Data Processing ─────────────────────────────────────
+pandas>=2.0.0
+numpy>=1.24.0
+pyarrow>=12.0.0        # Parquet read/write for pandas & PySpark
+
+# ── Distributed Computing ─────────────────────────────────────
+# Requires Java 8 or 11 installed and JAVA_HOME set.
+# Download Java: https://adoptium.net/
+pyspark>=3.4.0
+
+# ── Analytical Database ───────────────────────────────────────
+duckdb>=0.10.0
+
+# ── API & Data Extraction ─────────────────────────────────────
+requests>=2.31.0
+
+# ── Pipeline Orchestration (Airflow) ──────────────────────────
+# Optional — only needed if running the Airflow DAG
+apache-airflow>=2.6.0
+
+# ── dbt Transformation Models (bonus) ─────────────────────────
+# Optional — only needed for the dbt bonus section
+dbt-core>=1.6.0
+dbt-duckdb>=1.6.0
+
+# ── Dashboard & Visualisation ─────────────────────────────────
+dash>=2.14.0
+plotly>=5.15.0
+dash-bootstrap-components>=1.4.0
+
+# ── Jupyter (development / exploration) ───────────────────────
+jupyter>=1.0.0
+jupyterlab>=4.0.0
+notebook>=6.5.0
+nbformat>=5.7.0
+
+# ── Utilities ─────────────────────────────────────────────────
+python-dotenv>=1.0.0
+loguru>=0.7.0
+psutil>=5.9.0
+
+# ── Testing ───────────────────────────────────────────────────
+pytest>=7.4.0
+pytest-cov>=4.1.0
+
+# ── Code Quality ──────────────────────────────────────────────
+black>=23.0.0
+flake8>=6.0.0
+isort>=5.12.0
