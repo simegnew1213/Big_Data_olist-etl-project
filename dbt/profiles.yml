@@ -3,5 +3,8 @@ olist_duckdb:
   outputs:
     dev:
       type: duckdb
-      path: "{{ env_var('DUCKDB_PATH', '../analytics.duckdb') }}"
+      # Path is relative to where you run `dbt` from (the dbt/ folder).
+      # If running from project root instead, change to: analytics.duckdb
+      path: "../analytics.duckdb"
       threads: 4
+

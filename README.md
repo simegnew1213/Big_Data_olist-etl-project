@@ -151,6 +151,8 @@ olist-etl-project/
 │   └── transformed/                   # Final Parquet files from PySpark
 │
 ├── 📄 run_complete_etl.py             # Single-command pipeline runner
+├── 📄 check_duckdb.py                 # 🔍 DuckDB deep inspection (schema · nulls · sums · samples)
+├── 📄 check_db_summary.py             # 📊 Raw CSV + DuckDB combined summary
 ├── 📄 requirements.txt                # Python dependencies
 ├── 📄 .gitignore
 └── 📄 analytics.duckdb                # Analytical database (not committed)
@@ -277,10 +279,7 @@ python dashboard/app.py
 cd dbt
 pip install dbt-duckdb
 
-# Set path to your database
-export DUCKDB_PATH=../analytics.duckdb   # Linux/macOS
-set DUCKDB_PATH=..\analytics.duckdb      # Windows
-
+# Run from inside the dbt/ folder — profiles.yml already points to ../analytics.duckdb
 dbt run       # Build all models
 dbt test      # Run all schema + custom tests
 dbt docs generate && dbt docs serve   # Browse documentation
@@ -408,6 +407,218 @@ AIRFLOW_HOME=./airflow            # Airflow home directory
 
 ## 🧪 Data Quality Validation
 
+### Option A — DuckDB Deep Inspection (recommended)
+
+Runs a full audit of `analytics.duckdb`: schema overview, column types, null counts, numeric sums, and 3-row samples for every table.
+
+```bash
+python check_duckdb.py
+```
+
+**Output includes:**
+| Section | Detail |
+|---------|--------|
+| 📋 Database Overview | File size, schemas, table list with types |
+| 📄 Per-Table Detail | Columns · dtypes · null counts · null % |
+| 🔢 Numeric Sums | SUM of every numeric column per table |
+| 📊 Grand Totals | Total rows + cross-table numeric grand totals |
+| 👀 Sample Rows | First 3 rows of every table |
+| 🦆 DuckDB Version | Engine version string |
+
+### Option B — Full Dataset Summary (DB + Raw CSVs)
+
+Checks both `analytics.duckdb` **and** all 10 raw CSV files in `data/raw/`.
+
+```bash
+python check_db_summary.py
+```
+
+**Output includes:**
+- Row counts and numeric sums for all DuckDB tables
+- Row counts and numeric sums for every raw CSV file
+- Cross-file grand total rows across all 10 CSVs
+- Cross-file numeric column totals (e.g. total `price`, `freight_value`, `payment_value`)
+
+<details>
+<summary>📋 Click to see real output (May 2026)</summary>
+
+```
+======================================================================
+  🦆  DuckDB  →  d:\olist-etl-project\analytics.duckdb
+======================================================================
+
+  Found 4 table(s):
+
+  📄  main.monthly_revenue
+      Rows : 23
+      Numeric columns & sums:
+        • year                                          46,396
+        • month                                         145
+        • total_orders                                  96,478
+        • total_revenue                                 15,422,461.77
+        • avg_order_value                               3,408.56
+        • avg_delivery_days                             329.00
+        • late_deliveries                               6,534
+
+  📄  main.orders_full
+      Rows : 96,478
+      Numeric columns & sums:
+        • delivery_days                                 1,205,571
+        • was_late                                      6,534
+        • year                                          194,648,642
+        • month                                         581,870
+        • total_payment                                 15,422,461.77
+        • payment_count                                 100,756
+        • item_count                                    110,197
+        • items_total                                   13,221,498.11
+        • freight_total                                 2,198,275.64
+        • temp_max                                      2,329,309.70
+        • precipitation                                 253,436.10
+
+  📄  main.revenue_by_state
+      Rows : 27
+      Numeric columns & sums:
+        • total_orders                                  96,478
+        • total_revenue                                 15,422,461.77
+        • avg_order_value                               5,361.73
+        • avg_delivery_days                             505.30
+
+  📄  main.weather_impact
+      Rows : 3
+      Numeric columns & sums:
+        • total_orders                                  96,478
+        • avg_order_value                               479.85
+
+----------------------------------------------------------------------
+  📊  DUCKDB GRAND TOTAL ROWS : 96,531
+----------------------------------------------------------------------
+
+======================================================================
+  📂  Raw CSV files  →  d:\olist-etl-project\data\raw
+======================================================================
+
+  Found 10 CSV file(s):
+
+  📄  olist_customers_dataset.csv
+      Rows : 99,441
+      Numeric columns & sums:
+        • customer_zip_code_prefix                      3,494,105,610
+
+  📄  olist_geolocation_dataset.csv
+      Rows : 1,000,163
+      Numeric columns & sums:
+        • geolocation_zip_code_prefix                   36,580,128,055
+        • geolocation_lat                               -21,179,604.62
+        • geolocation_lng                               -46,398,102.98
+
+  📄  olist_order_items_dataset.csv
+      Rows : 112,650
+      Numeric columns & sums:
+        • order_item_id                                 134,936
+        • price                                         13,591,643.70
+        • freight_value                                 2,251,909.54
+
+  📄  olist_order_payments_dataset.csv
+      Rows : 103,886
+      Numeric columns & sums:
+        • payment_sequential                            113,514
+        • payment_installments                          296,423
+        • payment_value                                 16,008,872.12
+
+  📄  olist_order_reviews_dataset.csv
+      Rows : 99,224
+      Numeric columns & sums:
+        • review_score                                  405,471
+
+  📄  olist_orders_dataset.csv
+      Rows : 99,441
+      (no numeric columns)
+
+  📄  olist_products_dataset.csv
+      Rows : 32,951
+      Numeric columns & sums:
+        • product_name_lenght                           1,567,793.00
+        • product_description_lenght                    24,950,929.00
+        • product_photos_qty                            70,794.00
+        • product_weight_g                              75,007,492.00
+        • product_length_cm                             1,015,326.00
+        • product_height_cm                             558,079.00
+        • product_width_cm                              764,309.00
+
+  📄  olist_sellers_dataset.csv
+      Rows : 3,095
+      Numeric columns & sums:
+        • seller_zip_code_prefix                        99,940,829
+
+  📄  product_category_name_translation.csv
+      Rows : 71
+      (no numeric columns)
+
+  📄  sao_paulo_weather.csv
+      Rows : 608
+      Numeric columns & sums:
+        • temp_max                                      14,759.10
+        • precipitation                                 1,761.40
+
+----------------------------------------------------------------------
+  📊  RAW CSV GRAND TOTAL ROWS : 1,551,530
+----------------------------------------------------------------------
+
+======================================================================
+  🔢  CROSS-FILE NUMERIC COLUMN GRAND TOTALS
+======================================================================
+  • customer_zip_code_prefix                           3,494,105,610
+      ↳  [olist_customers_dataset]  3,494,105,610
+  • freight_value                                      2,251,909.54
+      ↳  [olist_order_items_dataset]  2,251,909.54
+  • geolocation_lat                                    -21,179,604.62
+      ↳  [olist_geolocation_dataset]  -21,179,604.62
+  • geolocation_lng                                    -46,398,102.98
+      ↳  [olist_geolocation_dataset]  -46,398,102.98
+  • geolocation_zip_code_prefix                        36,580,128,055
+      ↳  [olist_geolocation_dataset]  36,580,128,055
+  • order_item_id                                      134,936
+      ↳  [olist_order_items_dataset]  134,936
+  • payment_installments                               296,423
+      ↳  [olist_order_payments_dataset]  296,423
+  • payment_sequential                                 113,514
+      ↳  [olist_order_payments_dataset]  113,514
+  • payment_value                                      16,008,872.12
+      ↳  [olist_order_payments_dataset]  16,008,872.12
+  • precipitation                                      1,761.40
+      ↳  [sao_paulo_weather]  1,761.40
+  • price                                              13,591,643.70
+      ↳  [olist_order_items_dataset]  13,591,643.70
+  • product_description_lenght                         24,950,929.00
+      ↳  [olist_products_dataset]  24,950,929.00
+  • product_height_cm                                  558,079.00
+      ↳  [olist_products_dataset]  558,079.00
+  • product_length_cm                                  1,015,326.00
+      ↳  [olist_products_dataset]  1,015,326.00
+  • product_name_lenght                                1,567,793.00
+      ↳  [olist_products_dataset]  1,567,793.00
+  • product_photos_qty                                 70,794.00
+      ↳  [olist_products_dataset]  70,794.00
+  • product_weight_g                                   75,007,492.00
+      ↳  [olist_products_dataset]  75,007,492.00
+  • product_width_cm                                   764,309.00
+      ↳  [olist_products_dataset]  764,309.00
+  • review_score                                       405,471
+      ↳  [olist_order_reviews_dataset]  405,471
+  • seller_zip_code_prefix                             99,940,829
+      ↳  [olist_sellers_dataset]  99,940,829
+  • temp_max                                           14,759.10
+      ↳  [sao_paulo_weather]  14,759.10
+
+======================================================================
+  ✅  Summary complete.
+======================================================================
+```
+
+</details>
+
+### Option C — Quick One-liner
+
 ```bash
 # Quick validation from command line
 python -c "
@@ -418,8 +629,11 @@ for t in ['orders_full','monthly_revenue','revenue_by_state','weather_impact']:
     print(f'{t}: {n:,} rows')
 conn.close()
 "
+```
 
-# dbt tests
+### Option D — dbt Tests
+
+```bash
 cd dbt && dbt test
 ```
 
@@ -434,7 +648,11 @@ cd dbt && dbt test
 | `analytics.duckdb not found` | Run the full pipeline first: `python run_complete_etl.py` |
 | `Dashboard shows no data` | Ensure `analytics.duckdb` exists and has tables loaded |
 | `Airflow DAG not found` | Copy `dags/` to your `$AIRFLOW_HOME/dags/` folder |
-| `dbt connection error` | Check `DUCKDB_PATH` env var points to the correct `.duckdb` file |
+| `dbt connection error` | Run `dbt` from inside the `dbt/` folder. `profiles.yml` already points to `../analytics.duckdb` |
+| `check_duckdb.py shows no tables` | DuckDB is empty — run `python run_complete_etl.py` to load data first |
+| `check_db_summary.py CSV errors` | Ensure all Kaggle CSV files are placed in `data/raw/` before running |
+
+> ✅ **Spark v3.5.1** confirmed running successfully on this machine.
 
 ---
 
@@ -453,3 +671,22 @@ MIT License — see [LICENSE](LICENSE) for details.
 ---
 
 *Built for the Advanced Data Engineering Assignment · May 2026*
+
+---
+
+## 🔍 Inspection Scripts Reference
+
+| Script | Purpose | Run |
+|--------|---------|-----|
+| `check_duckdb.py` | Deep audit of `analytics.duckdb` — schema, nulls, sums, samples | `python check_duckdb.py` |
+| `check_db_summary.py` | Combined summary of DuckDB + all 10 raw CSV files | `python check_db_summary.py` |
+
+## Team Members
+- NAME                   ID
+- simegnew Aregahegn    DBU1601614
+-Muhammedkemal          DBU1601534
+-Ayele Girum            DBU1601406
+-Beletu Habte           DBU1601436
+-Yared Beyene           DBU1601729
+-Yehualashet GebreMelak DBU1601741
+-Rahel Genene           DBU1601570
