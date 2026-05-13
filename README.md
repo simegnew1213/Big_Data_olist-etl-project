@@ -387,11 +387,13 @@ Run: `cd dbt && dbt run && dbt test`
 
 | Member | Role | Primary Contributions |
 |--------|------|-----------------------|
-| **Simegnew** | Data Engineer & Team Lead | PySpark transformation pipeline (`02_transform_spark.py`), DuckDB loading (`03_load.py`), Airflow DAG design |
-| **[Member 2]** | ETL Developer | Data extraction (`01_extract.py`), Weather API integration, Parquet pipeline |
-| **[Member 3]** | BI Developer | Interactive Dash dashboard (`dashboard/app.py`), Plotly charts, dark/light theme |
-| **[Member 4]** | Data Modelling | dbt models & tests, DuckDB schema design, data quality validation |
-
+| **Simegnew** | Data Engineer & Team Lead | PySpark transformation pipeline (`02_transform_spark.ipynb`), DuckDB loading (`03_load.ipynb`), Airflow DAG design |
+| **MUhammedkemal** | ETL Developer | Data extraction (`01_extract.ipynb`), Weather API integration, Parquet pipeline |
+| **Ayele Girum** | BI Developer | Interactive Dash dashboard (`dashboard/app.py`), Plotly charts, dark/light theme |
+| **Yared Beyene** | Data Modelling | dbt project setup (`dbt_project.yml`, `profiles.yml`), DuckDB source definitions (`sources.yml`), staging views (`stg_orders.sql`, `stg_weather.sql`) |
+| **Rahel Genene** | Analytics Engineer | dbt mart models (`monthly_revenue.sql`, `revenue_by_state.sql`, `weather_impact.sql`), column-level schema tests (`schema.yml`) |
+| **Yehulahet Gebremelak** | Database Engineer | DuckDB schema design, analytics database setup (`analytics.duckdb`), business insight queries & KPI validation in `03_load.ipynb` |
+| **Beletu Habite** | Data Quality Engineer | Custom SQL data quality tests (`assert_positive_revenue.sql`, `assert_late_rate_reasonable.sql`, `assert_sp_top_state.sql`), pipeline validation & reporting (`pipeline_report.json`) |
 ---
 
 ## 🔧 Environment Variables
