@@ -1,4 +1,4 @@
-# 🛒 Olist E-Commerce ETL Pipeline
+# 🛒 Olist E-Commerce Analytics — Big Data Pipeline
 
 > **Advanced Data Engineering Assignment** — ETL pipeline using PySpark, DuckDB, Apache Airflow, dbt, and an interactive BI dashboard.
 
@@ -8,7 +8,7 @@
 [![Airflow](https://img.shields.io/badge/Airflow-2.6%2B-green)](https://airflow.apache.org)
 [![dbt](https://img.shields.io/badge/dbt-1.6%2B-red)](https://www.getdbt.com)
 
-**GitHub Repository:** https://github.com/simegnew1213/Big_Data_olist-etl-project
+**GitHub Repository:** https://github.com/simegnew1213/Olist-E-Commerce-Analytics_Big_Data_analysis
 
 ---
 
