@@ -24,7 +24,6 @@ env/
 .venv/
 
 # ── Jupyter checkpoints ───────────────────────────────────────
-.ipynb_checkpoints/
 *_output.ipynb
 
 # ── Airflow generated files ───────────────────────────────────
